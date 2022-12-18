@@ -13,7 +13,6 @@ import (
 	"github.com/manoj-gupta/go-auth/oauth"
 	"github.com/manoj-gupta/go-auth/oauth/github"
 	"github.com/manoj-gupta/go-auth/oauth/google"
-	"github.com/manoj-gupta/go-auth/oauth/wrapper"
 )
 
 const (
@@ -42,7 +41,7 @@ func main() {
 
 	// provider auth handler
 	p.Get("/auth/{provider}", func(w http.ResponseWriter, r *http.Request) {
-		wrapper.SignInHandler(w, r)
+		oauth.SignInHandler(w, r)
 	})
 
 	// index page handler

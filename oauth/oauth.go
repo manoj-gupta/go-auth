@@ -1,4 +1,4 @@
-package wrapper
+package oauth
 
 import (
 	"crypto/rand"
@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-
-	"github.com/manoj-gupta/go-auth/oauth"
 )
 
 var randomString = func() string {
@@ -32,12 +30,12 @@ func SignInHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAuthURL(w http.ResponseWriter, r *http.Request) (string, error) {
-	name, err := oauth.GetProviderName(r)
+	name, err := GetProviderName(r)
 	if err != nil {
 		return "", err
 	}
 
-	provider, err := oauth.GetProvider(name)
+	provider, err := GetProvider(name)
 	if err != nil {
 		return "", err
 	}
