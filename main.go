@@ -37,6 +37,14 @@ func main() {
 		github.New(os.Getenv("GITHUB_CLIENT_ID"), os.Getenv("GITHUB_SECRET"), os.Getenv("GITHUB_REDIRECT_URL"), "user"),
 	)
 
+	homePageData := HomePageData{
+		Title: "Social Authentication",
+		Details: []Detail{
+			{Name: "github", Description: "Github", Button: "btn-success", Icon: "fa-github"},
+			{Name: "google", Description: "Google", Button: "btn-primary", Icon: "fa-google"},
+		},
+	}
+
 	p := pat.New()
 
 	// provider auth handler
@@ -47,10 +55,24 @@ func main() {
 	// index page handler
 	p.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		t, _ := template.ParseFiles("templates/index.html")
-		t.Execute(w, false)
+		t.Execute(w, homePageData)
 	})
 
 	addr := ":" + strconv.Itoa(defaultServerPort)
 	log.Printf("listening on %s\n", addr)
 	log.Fatal(http.ListenAndServe(addr, p))
+}
+
+// HomePageData is used to generate links dynamically in index.html
+type HomePageData struct {
+	Title   string
+	Details []Detail
+}
+
+// Detail contains provider details for UI used in index.html
+type Detail struct {
+	Name        string
+	Description string
+	Button      string
+	Icon        string
 }
