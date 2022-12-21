@@ -33,6 +33,7 @@ func GetProviderName(r *http.Request) (string, error) {
 type Provider interface {
 	Name() string
 	GetAuthURL(state string) string
+	CallbackHandler(w http.ResponseWriter, r *http.Request) (User, error)
 }
 
 // Providers is a list of registered providers

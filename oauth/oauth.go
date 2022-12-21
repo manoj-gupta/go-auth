@@ -8,14 +8,15 @@ import (
 	"net/http"
 )
 
-var randomString = func() string {
+// RandomString is generated randomly at start to be used for state in AuthURL and CallbackHandler
+var RandomString = func() string {
 	nonceBytes := make([]byte, 64)
 	_, err := io.ReadFull(rand.Reader, nonceBytes)
 	if err != nil {
 		panic("random string not generated err: " + err.Error())
 	}
 	return base64.URLEncoding.EncodeToString(nonceBytes)
-}
+}()
 
 // SignInHandler wraps providers signin functions
 func SignInHandler(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +41,28 @@ func getAuthURL(w http.ResponseWriter, r *http.Request) (string, error) {
 		return "", err
 	}
 
-	url := provider.GetAuthURL(randomString())
+	url := provider.GetAuthURL(RandomString)
 
 	return url, nil
+}
+
+// CallbackHandler wraps providers callback functions
+func CallbackHandler(w http.ResponseWriter, r *http.Request) (User, error) {
+	name, err := GetProviderName(r)
+	if err != nil {
+		return User{}, err
+	}
+
+	provider, err := GetProvider(name)
+	if err != nil {
+		return User{}, err
+	}
+
+	return provider.CallbackHandler(w, r)
+}
+
+// Logout wraps providers logout functions
+func Logout(w http.ResponseWriter, r *http.Request) error {
+	// TBD
+	return nil
 }

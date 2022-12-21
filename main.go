@@ -47,6 +47,24 @@ func main() {
 
 	p := pat.New()
 
+	// provider logout
+	p.Get("/logout/{provider}", func(w http.ResponseWriter, r *http.Request) {
+		oauth.Logout(w, r)
+		w.Header().Set("Location", "/")
+		w.WriteHeader(http.StatusTemporaryRedirect)
+	})
+
+	// provider callback handler
+	p.Get("/auth/{provider}/callback", func(w http.ResponseWriter, r *http.Request) {
+		user, err := oauth.CallbackHandler(w, r)
+		if err != nil {
+			fmt.Fprintln(w, err)
+			return
+		}
+		t, _ := template.ParseFiles("templates/success.html")
+		t.Execute(w, user)
+	})
+
 	// provider auth handler
 	p.Get("/auth/{provider}", func(w http.ResponseWriter, r *http.Request) {
 		oauth.SignInHandler(w, r)
